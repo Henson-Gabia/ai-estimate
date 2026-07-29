@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>가비아 견적 스튜디오 (프로토타입)</title>
+<title>가비아 AI견적 스튜디오 (프로토타입)</title>
 <style>
   :root{
     --accent:#1f4e79; --accent2:#2e74b5; --bg:#eef2f7; --card:#ffffff;
@@ -271,8 +271,8 @@
 <!-- ================= LOGIN ================= -->
 <div id="login">
   <div class="login-card">
-    <div class="logo">가비아 <span>견적 스튜디오</span></div>
-    <div class="sub">IDC 서비스 견적 자동화 · 프로토타입</div>
+    <div class="logo">가비아 <span>AI견적 스튜디오</span></div>
+    <div class="sub">IDC · 하이웍스 · 클라우드 서비스 견적 자동화 · 프로토타입</div>
     <button class="sso-btn" onclick="doLogin()">
       <span class="h">H</span> 하이윅스(Hiworks) 계정으로 로그인
     </button>
@@ -288,7 +288,7 @@
 <div id="app" class="hidden">
   <header>
     <div style="display:flex;align-items:center">
-      <div class="brand">가비아 견적 스튜디오 <small>PROTOTYPE</small></div>
+      <div class="brand">가비아 AI견적 스튜디오 <small>PROTOTYPE</small></div>
       <nav>
         <button data-view="dash" onclick="switchView('dash')">대시보드</button>
         <button class="active" data-view="quote" onclick="switchView('quote')">견적서</button>
@@ -720,6 +720,7 @@
         <textarea id="aiInputHw" placeholder="예) 그룹웨어 100계정, 12개월 신규계약, 근무관리+전자결재 100계정 추가, 첫해 이벤트 할인 적용"></textarea>
         <div class="aibtns">
           <button class="hintbtn" onclick="fillSampleHw()">예시 채우기</button>
+          <button class="hintbtn" onclick="alert('프로토타입: RFQ(견적요청서) PDF·사양서를 올리면 AI가 품목을 자동 추출합니다.')">📎 RFQ 파일 업로드</button>
           <button onclick="parseHw()">✨ 구성 반영</button>
         </div>
       </div>
@@ -830,6 +831,7 @@
         <textarea id="aiInputCl" style="min-height:150px" placeholder="예) 4c/16gb/100gb 1대, 2c/16gb/50gb 4대(워커노드), nas 5000gb, 공인ip 3, 로드밸런서 1개, 할인율 20%, 백신, S/W WAF, 매니지드 프리미엄"></textarea>
         <div class="aibtns">
           <button class="hintbtn" onclick="fillSampleCloud()">예시 채우기</button>
+          <button class="hintbtn" onclick="alert('프로토타입: RFQ(견적요청서) PDF·사양서를 올리면 AI가 품목을 자동 추출합니다.')">📎 RFQ 파일 업로드</button>
           <button onclick="parseCloud()">✨ 구성 반영</button>
         </div>
       </div>
