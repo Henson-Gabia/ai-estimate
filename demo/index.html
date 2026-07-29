@@ -212,6 +212,23 @@
   .feat-item:last-child{border:none}
   .feat-item .on2{color:var(--ok);font-weight:700}
   .feat-item .off2{color:#c0392b}
+
+  /* 신청서 등록 */
+  .flowbar{display:flex;align-items:center;gap:8px;background:#f4f8fd;border:1px solid #cfe0f2;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12.5px;color:var(--accent);flex-wrap:wrap}
+  .flowbar b{background:#fff;border:1px solid #cfe0f2;border-radius:6px;padding:3px 9px;font-weight:700}
+  .flowbar .arw{color:var(--accent2)}
+  .optcards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 14px}
+  @media(max-width:720px){.optcards{grid-template-columns:1fr}}
+  .optcard{border:1.5px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;transition:.15s}
+  .optcard.on{border-color:var(--accent2);background:#f4f8fd;box-shadow:0 0 0 3px rgba(46,116,181,.1)}
+  .optcard .ot{font-weight:700;color:var(--accent);font-size:13.5px}
+  .optcard .od{font-size:11.5px;color:var(--sub);margin-top:4px;line-height:1.5}
+  .dropzone{border:2px dashed #cfe0f2;border-radius:10px;padding:22px;text-align:center;color:var(--sub);font-size:12.5px;background:#fafcfe;cursor:pointer}
+  .dropzone.done{border-color:var(--ok);background:#f2faf5;color:var(--ok)}
+  .ocr-badge{display:inline-block;background:#e6f5ec;color:var(--ok);border-radius:6px;font-size:11px;font-weight:700;padding:2px 8px;margin-left:6px}
+  .agree{display:flex;gap:9px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed #eef1f5;font-size:12px;color:var(--ink)}
+  .agree:last-child{border:none}
+  .agree input{margin-top:2px}
 </style>
 </head>
 <body>
@@ -311,7 +328,9 @@
 
     <div class="subnav">
       <button class="on" data-sub="build" onclick="switchSub('build')">✨ AI 견적 작성</button>
+      <button data-sub="edit" onclick="switchSub('edit')">✏️ 견적서 편집기</button>
       <button data-sub="mine" onclick="switchSub('mine')">🗂️ My 견적서 보관함</button>
+      <button data-sub="apply" onclick="switchSub('apply')">📝 신청서 등록</button>
     </div>
 
     <!-- My 견적서 보관함 -->
@@ -323,7 +342,7 @@
             <thead><tr><th>견적번호</th><th>고객사</th><th>구성 요약</th><th>월 금액</th><th>최종수정</th><th></th></tr></thead>
             <tbody>
               <tr><td>Q-2607-018 <span class="ver">v1.2</span></td><td>㈜코로시스템</td><td>DL360 4대 · 코로100M/½랙 · 포티120G HA</td><td>4,471,720원</td><td>07-28</td>
-                <td><button class="mini" onclick="switchSub('build')">열기</button><button class="mini">복사</button><button class="mini">삭제</button></td></tr>
+                <td><button class="mini" onclick="switchSub('build')">열기</button><button class="mini">복사</button><button class="mini" onclick="switchSub('apply')">📝 신청서 전환</button></td></tr>
               <tr><td>Q-2607-015 <span class="ver">v2.0</span></td><td>메가존클라우드</td><td>DL380 6대 · Full Rack · IPS</td><td>6,820,000원</td><td>07-26</td>
                 <td><button class="mini">열기</button><button class="mini">복사</button><button class="mini">삭제</button></td></tr>
               <tr><td>Q-2607-011 <span class="ver">v1.0</span></td><td>㈜한빛소프트</td><td>DL160 2대 · 회선50M</td><td>2,150,000원</td><td>07-22</td>
@@ -331,6 +350,102 @@
             </tbody>
           </table>
           <div class="note" style="padding:12px 16px">※ 삭제 대신 하나의 견적번호 안에 히스토리(v1.0 → v1.1 → v2.0)로 보관합니다. 각 버전의 작성자·기준가(최저가/판매가)가 함께 추적됩니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 견적서 편집기 (자리) -->
+    <div id="sub-edit" class="hidden">
+      <div class="card">
+        <h2><span class="n">✏️</span> 견적서 편집기 <small style="font-weight:400;color:var(--sub);margin-left:6px">AI 생성 항목의 단가·수량·부가세를 직접 편집</small></h2>
+        <div class="body">
+          <p style="font-size:12.5px;color:var(--sub)">AI가 생성한 견적 항목을 캔버스에서 직접 수정·삭제하고, 공급가액·부가세가 실시간 재계산됩니다. (프로토타입에서는 'AI 견적 작성' 탭의 실시간 입력폼이 편집기 역할을 겸합니다.)</p>
+          <div class="stub" style="background:#f4f8fd;border-color:#cfe0f2">본격 개발 시: 표 형태 인라인 편집 · 행 추가/삭제 · 품목 검색(마스터 연동) · 수동 단가 조정(권한 내)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 신청서 등록 (4번) -->
+    <div id="sub-apply" class="hidden">
+      <div class="flowbar">
+        <b>① 견적서 발송</b><span class="arw">→</span><b>② 고객 계약의사</b><span class="arw">→</span><b>③ 신청서 자동 전환</b><span class="arw">→</span><b>④ 고객정보 입력</b><span class="arw">→</span><b>⑤ 등록/서명</b>
+      </div>
+      <div class="grid">
+        <!-- LEFT: 가입자 정보 -->
+        <div class="card">
+          <h2><span class="n">1</span> 가입자 정보</h2>
+          <div class="body">
+            <div class="field"><label>전환할 견적서</label>
+              <select id="apSrc" onchange="apLoad()">
+                <option value="Q-2607-018">Q-2607-018 · ㈜코로시스템 · v1.2 (4,471,720원/월)</option>
+                <option value="Q-2607-015">Q-2607-015 · 메가존클라우드 · v2.0</option>
+              </select>
+            </div>
+            <div class="sec-head" style="margin-top:6px">고객정보 입력 방식</div>
+            <div class="optcards">
+              <div class="optcard on" id="opt-ocr" onclick="apMode('ocr')">
+                <div class="ot">📄 사업자등록증 업로드</div>
+                <div class="od">고객이 준 사업자등록증을 올리면 법인명·대표자·사업자번호·주소를 자동 입력(OCR)</div>
+              </div>
+              <div class="optcard" id="opt-blank" onclick="apMode('blank')">
+                <div class="ot">✍️ 공란(고객 작성)</div>
+                <div class="od">고객정보를 비워 신청서를 발송하고, 고객이 직접 작성하도록 요청</div>
+              </div>
+            </div>
+            <div id="ocrZone">
+              <div class="dropzone" id="drop" onclick="apOcr()">📄 사업자등록증 파일을 여기에 끌어놓거나 클릭하여 업로드<br><small>(PDF·JPG·PNG · 스캔 이미지는 OCR 처리)</small></div>
+            </div>
+            <div class="divider"></div>
+            <div class="row">
+              <div class="field"><label>법인명(고객명) <span id="b1"></span></label><input type="text" id="apName" placeholder="예: ㈜코로시스템"></div>
+              <div class="field"><label>대표자명 <span id="b2"></span></label><input type="text" id="apCeo" placeholder=""></div>
+            </div>
+            <div class="row">
+              <div class="field"><label>사업자등록번호 <span id="b3"></span></label><input type="text" id="apBiz" placeholder="000-00-00000"></div>
+              <div class="field"><label>가비아 회원ID</label><input type="text" id="apMid" placeholder=""></div>
+            </div>
+            <div class="field"><label>주소 <span id="b4"></span></label><input type="text" id="apAddr" placeholder=""></div>
+            <div class="row">
+              <div class="field"><label>담당자 이름</label><input type="text" id="apMgr" placeholder=""></div>
+              <div class="field"><label>담당자 이메일</label><input type="text" id="apMail" placeholder=""></div>
+            </div>
+            <div class="row">
+              <div class="field"><label>계약기간</label><select><option>1년</option><option selected>2년</option><option>3년</option></select></div>
+              <div class="field"><label>IDC 센터</label><select><option>가산U+</option><option selected>가산KINX</option><option>서초U+</option><option>강남SKB</option></select></div>
+            </div>
+          </div>
+        </div>
+        <!-- RIGHT: 신청 서비스(견적 그대로) + 동의 -->
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div class="card">
+            <h2><span class="n">2</span> 신청 서비스 <small style="font-weight:400;color:var(--sub);margin-left:6px">견적 내용 그대로 반영됨</small></h2>
+            <div class="body">
+              <table class="q">
+                <thead><tr><th style="text-align:left">구분 / 세부항목</th><th>수량</th><th>합계</th></tr></thead>
+                <tbody>
+                  <tr><td>서버 임대 · DL360 G10 4대 (24개월 소유권이전)</td><td class="num">4</td><td class="num">2,405,200</td></tr>
+                  <tr><td>회선 100M</td><td class="num">1</td><td class="num">380,000</td></tr>
+                  <tr><td>상면 1/2 Rack</td><td class="num">1</td><td class="num">500,000</td></tr>
+                  <tr><td>단독형 방화벽 Forti FG-120G (HA)</td><td class="num">2</td><td class="num">600,000</td></tr>
+                  <tr><td>웹셸 탐지</td><td class="num">2</td><td class="num">180,000</td></tr>
+                  <tr class="sub"><td>월 요금 합계 (VAT 별도)</td><td></td><td class="num">4,065,200</td></tr>
+                </tbody>
+              </table>
+              <div class="note">※ 견적서(Q-2607-018)의 품목·수량·금액이 그대로 신청서에 복사됩니다. 수정 시 견적 버전이 갱신됩니다.</div>
+            </div>
+          </div>
+          <div class="card">
+            <h2><span class="n">3</span> 필수 동의</h2>
+            <div class="body">
+              <div class="agree"><input type="checkbox" id="ag1"><label for="ag1">계약 해지 유의사항 동의 (해지 정산금 = 할인액 + 잔여 이용요금 30% + 잔여 장비·약정 100%)</label></div>
+              <div class="agree"><input type="checkbox" id="ag2"><label for="ag2">시스템 접근/제어 동의 (매니지드·보안·기술지원 서비스 이용 시)</label></div>
+              <div class="agree"><input type="checkbox" id="ag3"><label for="ag3">불법서비스 비운영 동의</label></div>
+              <div class="actions">
+                <button onclick="alert('프로토타입: 신청서를 임시저장했습니다.')">임시저장</button>
+                <button class="primary" onclick="apSubmit()">📝 신청서 등록 / 서명요청</button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -929,9 +1044,33 @@ function switchView(v){
   window.scrollTo(0,0);
 }
 function goQuoteNew(){ switchView('quote'); switchSub('build'); }
+// 신청서 등록
+function apMode(m){
+  document.getElementById('opt-ocr').classList.toggle('on', m==='ocr');
+  document.getElementById('opt-blank').classList.toggle('on', m==='blank');
+  document.getElementById('ocrZone').style.display = m==='ocr'?'block':'none';
+  if(m==='blank'){ ['apName','apCeo','apBiz','apAddr'].forEach(id=>document.getElementById(id).value=''); ['b1','b2','b3','b4'].forEach(id=>document.getElementById(id).innerHTML='');
+    document.getElementById('drop').classList.remove('done'); document.getElementById('drop').innerHTML='📄 사업자등록증 파일을 여기에 끌어놓거나 클릭하여 업로드<br><small>(PDF·JPG·PNG · 스캔 이미지는 OCR 처리)</small>'; }
+}
+function apOcr(){
+  const d=document.getElementById('drop');
+  d.classList.add('done'); d.innerHTML='✅ 가비아_사업자등록증.pdf 업로드 완료 · OCR 인식됨';
+  // OCR 자동입력 (데모: 업로드한 사업자등록증 값)
+  document.getElementById('apName').value='주식회사 가비아';
+  document.getElementById('apCeo').value='김홍국';
+  document.getElementById('apBiz').value='214-81-06775';
+  document.getElementById('apAddr').value='경기도 성남시 분당구 판교로 344';
+  ['b1','b2','b3','b4'].forEach(id=>document.getElementById(id).innerHTML='<span class="ocr-badge">OCR 자동입력</span>');
+}
+function apLoad(){ /* 데모: 선택 견적에 따라 신청 서비스 표를 갱신하는 자리 */ }
+function apSubmit(){
+  if(!(document.getElementById('ag1').checked && document.getElementById('ag2').checked && document.getElementById('ag3').checked)){
+    alert('필수 동의 항목 3가지에 모두 체크해야 등록할 수 있습니다.'); return;
+  }
+  alert('프로토타입: 신청서가 등록되고 고객에게 전자서명 요청이 발송됩니다.');
+}
 function switchSub(s){
-  document.getElementById('sub-build').classList.toggle('hidden', s!=='build');
-  document.getElementById('sub-mine').classList.toggle('hidden', s!=='mine');
+  ['build','edit','mine','apply'].forEach(x=>document.getElementById('sub-'+x).classList.toggle('hidden', x!==s));
   document.querySelectorAll('.subnav button[data-sub]').forEach(b=>b.classList.toggle('on', b.dataset.sub===s));
 }
 function switchAdm(a){
