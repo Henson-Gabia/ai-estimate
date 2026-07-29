@@ -153,8 +153,17 @@
   .st-sent{background:#e7f0fb;color:var(--accent2)}
   .st-wait{background:#fff3e0;color:#b26a00}
   .st-won{background:#e6f5ec;color:var(--ok)}
-  .dash-2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+  .dash-2{display:grid;grid-template-columns:3fr 7fr;gap:18px;align-items:start}
   @media(max-width:900px){.dash-2{grid-template-columns:1fr}}
+  .donut-wrap svg{width:180px;height:180px}
+  .contact{position:relative;display:inline-block;cursor:pointer}
+  .contact-pop{display:none;position:absolute;right:36px;top:-6px;z-index:50;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 26px rgba(0,0,0,.18);padding:11px 13px;font-size:11.5px;line-height:1.75;white-space:nowrap;text-align:left;color:var(--ink)}
+  .contact-pop::after{content:"";position:absolute;right:-7px;top:12px;border:7px solid transparent;border-left-color:#fff}
+  .contact:hover .contact-pop,.contact.pin .contact-pop{display:block}
+  .contact-pop b{color:var(--accent);font-size:12.5px}
+  .qlist .ctr{text-align:center}
+  .card.ovis{overflow:visible}
+  .card.ovis > h2{border-radius:12px 12px 0 0}
   .bar{display:flex;align-items:center;gap:10px;margin:9px 0;font-size:12.5px}
   .bar .track{flex:1;height:10px;background:#eef1f5;border-radius:6px;overflow:hidden}
   .bar .fill{height:100%;background:var(--accent2);border-radius:6px}
@@ -162,6 +171,32 @@
   .bar .ct{width:34px;text-align:right;color:var(--sub);font-weight:700}
   .alert-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed #eef1f5;font-size:12.5px}
   .alert-item .ico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:#eef4fb}
+
+  /* dashboard v2 - donut + pipeline list */
+  .donut-wrap{display:flex;flex-direction:column;align-items:center;gap:6px}
+  .legend{width:100%;margin-top:6px}
+  .lg-row{display:flex;align-items:center;justify-content:space-between;padding:9px 4px;border-bottom:1px solid #f0f3f7}
+  .lg-row:last-child{border:none}
+  .lg-l{display:flex;align-items:center;gap:9px}
+  .lg-badge{font-size:11.5px;font-weight:700;border-radius:6px;padding:3px 9px}
+  .lg-cnt{font-size:12.5px;color:var(--ink);font-weight:700}
+  .lg-amt{font-size:12.5px;color:var(--sub);min-width:120px;text-align:right;font-variant-numeric:tabular-nums}
+  .fchips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:4px}
+  .fchip{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 11px;font-size:12px;color:var(--sub);cursor:pointer}
+  .fchip.key{background:#eef4fb;border-color:#cfe0f2;color:var(--accent2);font-weight:700}
+  .fchip.on{background:var(--accent2);border-color:var(--accent2);color:#fff;font-weight:700}
+  .plist{width:100%;border-collapse:collapse;font-size:12.5px}
+  .plist th{text-align:left;color:var(--sub);font-weight:600;font-size:11.5px;padding:9px;border-bottom:1px solid var(--line)}
+  .plist td{padding:10px 9px;border-bottom:1px solid #f0f3f7}
+  .plist tr:hover td{background:#f8fafc}
+  .plist tr.hl td{background:#f4f8fd}
+  .plist .amt{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  .plist .ctr{text-align:center;color:var(--sub)}
+  .ddays{display:inline-block;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:700;background:#eef1f5;color:#6b7280}
+  .ddays.warn{background:#fff3e0;color:#b26a00}
+  .ddays.urgent{background:#fde8e8;color:#c0392b}
+  .av-sm{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
+  .av-b{background:#2e74b5}.av-g{background:#178a53}.av-p{background:#8250c4}
 
   /* my quotes list */
   .qlist{width:100%;border-collapse:collapse;font-size:12.5px}
@@ -271,7 +306,7 @@
 
   <!-- ===== DASHBOARD VIEW ===== -->
   <main id="view-dash" class="hidden">
-    <div class="page-title"><h1>대시보드</h1><p>내 견적 현황과 이번 달 통계를 한눈에 확인합니다.</p></div>
+    <div class="page-title"><h1>대시보드</h1><p>내 견적 현황을 한눈에 확인합니다.</p></div>
     <div class="kpis">
       <div class="kpi"><div class="t">당월 견적 건수</div><div class="v">12건</div><div class="d">▲ 지난달 대비 +3</div></div>
       <div class="kpi"><div class="t">당월 총 견적 금액</div><div class="v">3,240만원</div><div class="d">월 요금 합산(VAT 별도)</div></div>
@@ -279,38 +314,51 @@
       <div class="kpi"><div class="t">성사(수주)</div><div class="v">5건</div><div class="d">성사율 42%</div></div>
     </div>
     <div class="dash-2">
+      <!-- My 견적 비율 (도넛, 축소) -->
       <div class="card">
+        <h2 style="justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:8px"><span class="n">◔</span> My 견적 비율</span>
+          <span class="seg" id="dashToggle">
+            <button class="on" onclick="buildDash('cnt')">개수</button>
+            <button onclick="buildDash('amt')">금액</button>
+          </span>
+        </h2>
+        <div class="body">
+          <div class="donut-wrap">
+            <svg id="donut" viewBox="0 0 160 160" width="180" height="180"></svg>
+          </div>
+          <div class="legend" id="dashLegend"></div>
+        </div>
+      </div>
+      <!-- My 견적 현황 (메인) -->
+      <div class="card ovis">
         <h2><span class="n">✓</span> My 견적 현황</h2>
         <div class="body" style="padding:0">
           <table class="qlist">
-            <thead><tr><th>견적번호</th><th>고객사</th><th>월 금액</th><th>상태</th><th>수신확인</th></tr></thead>
+            <thead><tr><th>견적번호</th><th>고객사</th><th>예상 견적</th><th>상태</th><th>문의 일자</th><th class="ctr">담당자</th></tr></thead>
             <tbody>
-              <tr><td>Q-2607-018 <span class="ver">v1.2</span></td><td>㈜코로시스템</td><td>4,471,720원</td><td><span class="status-pill st-wait">승인대기</span></td><td>—</td></tr>
-              <tr><td>Q-2607-015 <span class="ver">v2.0</span></td><td>메가존클라우드</td><td>6,820,000원</td><td><span class="status-pill st-sent">발송완료</span></td><td>👁 열람</td></tr>
-              <tr><td>Q-2607-011 <span class="ver">v1.0</span></td><td>㈜한빛소프트</td><td>2,150,000원</td><td><span class="status-pill st-won">성사</span></td><td>👁 열람 · ⬇ 다운</td></tr>
-              <tr><td>Q-2607-009 <span class="ver">v1.1</span></td><td>다우기술</td><td>3,980,000원</td><td><span class="status-pill st-draft">초안</span></td><td>—</td></tr>
+              <tr><td>Q-2607-018 <span class="ver">v1.2</span></td><td>㈜코로시스템</td><td>4,471,720원</td><td><span class="status-pill st-wait">승인대기</span></td><td>2026.07.12</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-b">신</span><span class="contact-pop"><b>신희준 매니저</b><br>📞 010-9410-0005<br>✉ shjun0909@hanmai.net</span></span></td></tr>
+              <tr><td>Q-2607-015 <span class="ver">v2.0</span></td><td>메가존클라우드</td><td>6,820,000원</td><td><span class="status-pill st-sent">발송완료</span></td><td>2026.07.24</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-g">김</span><span class="contact-pop"><b>김종하 연구소장</b><br>📞 010-3665-1945<br>✉ kimjha@evacnp.com</span></span></td></tr>
+              <tr><td>Q-2607-011 <span class="ver">v1.0</span></td><td>㈜한빛소프트</td><td>2,150,000원</td><td><span class="status-pill st-won">성사</span></td><td>2026.07.22</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-b">박</span><span class="contact-pop"><b>박영수 부장</b><br>📞 010-2211-3344<br>✉ yspark@hanbit.co.kr</span></span></td></tr>
+              <tr><td>Q-2607-009 <span class="ver">v1.1</span></td><td>다우기술</td><td>3,980,000원</td><td><span class="status-pill st-draft">초안</span></td><td>2026.07.25</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-g">이</span><span class="contact-pop"><b>이지은 대리</b><br>📞 010-7788-9900<br>✉ je.lee@daou.com</span></span></td></tr>
+              <tr><td>Q-2607-007 <span class="ver">v1.0</span></td><td>에바씨엔피㈜</td><td>12,359,160원</td><td><span class="status-pill st-sent">발송완료</span></td><td>2026.07.21</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-b">최</span><span class="contact-pop"><b>최민석 팀장</b><br>📞 010-4455-6677<br>✉ ms.choi@evacnp.com</span></span></td></tr>
+              <tr><td>Q-2607-005 <span class="ver">v2.1</span></td><td>넥서스소프트</td><td>2,640,000원</td><td><span class="status-pill st-won">성사</span></td><td>2026.07.18</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-p">정</span><span class="contact-pop"><b>정현우 과장</b><br>📞 010-3322-1100<br>✉ hw.jung@nexus.co.kr</span></span></td></tr>
+              <tr><td>Q-2607-004 <span class="ver">v1.0</span></td><td>퀀텀정보기술</td><td>5,120,000원</td><td><span class="status-pill st-wait">승인대기</span></td><td>2026.07.16</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-b">강</span><span class="contact-pop"><b>강도현 이사</b><br>📞 010-9911-2233<br>✉ dh.kang@quantum.kr</span></span></td></tr>
+              <tr><td>Q-2607-003 <span class="ver">v1.3</span></td><td>지오시스템</td><td>7,450,000원</td><td><span class="status-pill st-sent">발송완료</span></td><td>2026.07.15</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-g">윤</span><span class="contact-pop"><b>윤소라 매니저</b><br>📞 010-6677-8899<br>✉ sora.yoon@geosys.com</span></span></td></tr>
+              <tr><td>Q-2607-002 <span class="ver">v1.0</span></td><td>모바일에이스</td><td>1,890,000원</td><td><span class="status-pill st-draft">초안</span></td><td>2026.07.11</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-p">한</span><span class="contact-pop"><b>한지민 대리</b><br>📞 010-1212-3434<br>✉ jm.han@mobileace.io</span></span></td></tr>
+              <tr><td>Q-2606-021 <span class="ver">v2.0</span></td><td>클라우드스케이프</td><td>9,300,000원</td><td><span class="status-pill st-won">성사</span></td><td>2026.06.28</td>
+                <td class="ctr"><span class="contact" onclick="this.classList.toggle('pin')"><span class="av-sm av-b">서</span><span class="contact-pop"><b>서준호 부장</b><br>📞 010-5566-7788<br>✉ jh.seo@cloudscape.co.kr</span></span></td></tr>
             </tbody>
           </table>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:18px">
-        <div class="card">
-          <h2><span class="n">★</span> 많이 쓴 템플릿 Top 5</h2>
-          <div class="body">
-            <div class="bar"><span class="nm">웹+DB 표준 4대</span><div class="track"><div class="fill" style="width:92%"></div></div><span class="ct">23</span></div>
-            <div class="bar"><span class="nm">단독 서버호스팅</span><div class="track"><div class="fill" style="width:70%"></div></div><span class="ct">17</span></div>
-            <div class="bar"><span class="nm">코로 1/2랙 패키지</span><div class="track"><div class="fill" style="width:52%"></div></div><span class="ct">13</span></div>
-            <div class="bar"><span class="nm">보안 HA 구성</span><div class="track"><div class="fill" style="width:40%"></div></div><span class="ct">10</span></div>
-            <div class="bar"><span class="nm">Full Rack 코로</span><div class="track"><div class="fill" style="width:28%"></div></div><span class="ct">7</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <h2><span class="n">!</span> 알림</h2>
-          <div class="body">
-            <div class="alert-item"><div class="ico">👁</div><div><b>메가존클라우드</b>가 견적서를 열람했습니다. <small style="color:var(--sub)">10분 전</small></div></div>
-            <div class="alert-item"><div class="ico">⏳</div><div>Q-2607-018 <b>팀장 승인 대기</b> 중입니다. <small style="color:var(--sub)">1시간 전</small></div></div>
-            <div class="alert-item"><div class="ico">💰</div><div>㈜한빛소프트 견적이 <b>성사</b> 처리되었습니다. <small style="color:var(--sub)">어제</small></div></div>
-          </div>
         </div>
       </div>
     </div>
@@ -1191,9 +1239,60 @@ function switchView(v){
   ['dash','quote','comm','admin','guide'].forEach(x=>document.getElementById('view-'+x).classList.add('hidden'));
   document.getElementById('view-'+v).classList.remove('hidden');
   document.querySelectorAll('header nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===v));
+  if(v==='dash'){ buildDash(window._dashMode||'cnt'); }
   window.scrollTo(0,0);
 }
 function goQuoteNew(){ switchView('quote'); switchSub('build'); }
+// ===== 대시보드: 단계별 지연 비율 + 리스트 =====
+const DASH_STAGES=[
+  {k:'의뢰 문의', cnt:1, amt:34000000, c:'#9aa4b2', bg:'#eef1f5', tx:'#6b7280'},
+  {k:'메일 전송', cnt:2, amt:50000000, c:'#f2994a', bg:'#fdefe0', tx:'#b26a00'},
+  {k:'견적 요청', cnt:3, amt:82000000, c:'#2e74b5', bg:'#eaf1fa', tx:'#2e74b5'},
+  {k:'계약 요청', cnt:8, amt:433200000, c:'#6c8cff', bg:'#eef0fb', tx:'#4a5fc1'}
+];
+const wonW = n => '₩'+Math.round(n).toLocaleString('ko-KR');
+function buildDash(mode){
+  mode=mode||'cnt'; window._dashMode=mode;
+  document.querySelectorAll('#dashToggle button').forEach((b,i)=>b.classList.toggle('on', (i===0)===(mode==='cnt')));
+  const vals=DASH_STAGES.map(s=>mode==='cnt'?s.cnt:s.amt);
+  const total=vals.reduce((a,b)=>a+b,0)||1;
+  const r=54, C=2*Math.PI*r; let off=0;
+  let svg=`<circle cx="80" cy="80" r="${r}" fill="none" stroke="#f0f3f7" stroke-width="22"/>`;
+  DASH_STAGES.forEach((s,i)=>{
+    const len=vals[i]/total*C;
+    svg+=`<circle cx="80" cy="80" r="${r}" fill="none" stroke="${s.c}" stroke-width="22" stroke-dasharray="${len.toFixed(2)} ${(C-len).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 80 80)"/>`;
+    off+=len;
+  });
+  svg+=`<text x="80" y="74" text-anchor="middle" font-size="12" fill="#6b7280">${mode==='cnt'?'총 건수':'총 금액'}</text>`;
+  svg+=`<text x="80" y="94" text-anchor="middle" font-size="15" font-weight="800" fill="#1f4e79">${mode==='cnt'?total+'건':wonW(total)}</text>`;
+  document.getElementById('donut').innerHTML=svg;
+  document.getElementById('dashLegend').innerHTML=DASH_STAGES.map(s=>
+    `<div class="lg-row"><div class="lg-l"><span class="lg-badge" style="background:${s.bg};color:${s.tx}">${s.k}</span></div>`+
+    `<div style="display:flex;align-items:center;gap:14px"><span class="lg-cnt">${s.cnt}건</span><span class="lg-amt">${wonW(s.amt)}</span></div></div>`).join('');
+}
+const PLIST=[
+  {t:'㈜코로시스템 IDC 서버호스팅 계약', a:'₩4,471,720', d:'2026.07.12', dd:9, w:'B'},
+  {t:'에바씨엔피 클라우드 구축 계약', a:'₩12,359,160', d:'2026.07.24', dd:8, w:'G', hl:true},
+  {t:'메가존클라우드 리뉴얼 계약', a:'₩6,820,000', d:'2026.07.25', dd:7, w:'G'},
+  {t:'넥서스 하이윅스 도입 계약', a:'₩2,640,000', d:'2026.07.12', dd:9, w:'B'},
+  {t:'한빛소프트 코로케이션 계약', a:'₩2,150,000', d:'2026.07.24', dd:8, w:'B'},
+  {t:'다우기술 클라우드 계약', a:'₩3,980,000', d:'2026.07.25', dd:7, w:'G'},
+  {t:'퀀텀 IDC 코로 계약', a:'₩2,000,000', d:'2026.07.12', dd:9, w:'B'},
+  {t:'모바일앱 UI/UX 운영 계약', a:'₩100,000,000', d:'2026.07.24', dd:8, w:'B'}
+];
+let plHidden=false;
+function renderPlist(){
+  const rows = plHidden ? PLIST.concat([{t:'(숨김) 폐기 예정 견적 · 지오시스템', a:'₩1,200,000', d:'2026.07.10', dd:11, w:'P'}]) : PLIST;
+  document.getElementById('plistBody').innerHTML = rows.map(r=>{
+    const cls = r.dd<=7?'urgent':(r.dd===8?'warn':'');
+    const av = r.w==='B'?'av-b':(r.w==='G'?'av-g':'av-p');
+    return `<tr class="${r.hl?'hl':''}"><td>${r.t}</td><td class="amt">${r.a}</td><td class="ctr">${r.d}</td>`+
+      `<td class="ctr"><span class="ddays ${cls}">${r.dd}일</span></td>`+
+      `<td class="ctr"><span class="av-sm ${av}">${r.w}</span></td></tr>`;
+  }).join('');
+}
+function toggleHidden(){ plHidden=!plHidden; document.getElementById('fHidden').classList.toggle('on', plHidden);
+  document.getElementById('fHidden').innerHTML=(plHidden?'☑':'☐')+' 숨긴 리스트 포함'; renderPlist(); }
 // 신청서 등록
 function apMode(m){
   document.getElementById('opt-ocr').classList.toggle('on', m==='ocr');
