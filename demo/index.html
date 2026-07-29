@@ -462,10 +462,9 @@
         <div class="ic">💼</div><div class="nm">하이윅스</div>
         <div class="ds">그룹웨어 SaaS · 계정 수 × 개월 구독형 · 첫해 할인</div>
       </div>
-      <div class="catcard disabled" data-cat="cloud" onclick="switchCat('cloud')">
-        <span class="soon">준비중</span>
+      <div class="catcard" data-cat="cloud" onclick="switchCat('cloud')">
         <div class="ic">☁️</div><div class="nm">클라우드</div>
-        <div class="ds">별도 양식 확보 후 세 번째 견적 도메인으로 추가 예정</div>
+        <div class="ds">가비아 클라우드(Gen2) · VM 스펙(vCore/RAM) + 스토리지(GB) · 20% 할인</div>
       </div>
     </div>
 
@@ -777,11 +776,76 @@
 
     <!-- ===== 클라우드 (준비중) ===== -->
     <div id="cat-cloud" class="hidden">
-      <div class="cloud-ph">
-        ☁️<br><br><b style="color:var(--accent);font-size:15px">클라우드 견적 카테고리는 준비 중입니다.</b><br>
-        별도 견적 양식을 확보하면 세 번째 견적 도메인(독립 상품 카탈로그·가격 엔진)으로 추가됩니다.
+    <div class="aibar">
+      <span class="tag">☁️ 가비아 클라우드(Gen2) <small>· 가상서버 스펙과 스토리지로 견적을 계산합니다</small></span>
+    </div>
+    <div class="grid">
+      <!-- LEFT -->
+      <div class="card">
+        <h2><span class="n">1</span> 구성 입력</h2>
+        <div class="body">
+          <div class="field"><label>고객사명</label><input type="text" id="clCust" value="에바씨엔피㈜" oninput="calcCloud()"></div>
+          <div class="divider"></div>
+          <div class="sec-head">🖥️ 가상서버(VM) 구성</div>
+          <div id="clVmRows"></div>
+          <div class="row" style="margin-top:6px"><label style="color:var(--accent2);cursor:pointer;font-weight:700" onclick="clAddVm()">＋ 서버 그룹 추가</label></div>
+
+          <div class="divider"></div>
+          <div class="sec-head">💾 스토리지</div>
+          <div class="toggle-line"><div class="lbl">NAS (SSD)<small>GB당 70원</small></div><div class="rt"><input class="qty" style="width:80px" type="number" id="clNas" value="1000" min="0" oninput="calcCloud()"> GB</div></div>
+
+          <div class="divider"></div>
+          <div class="sec-head">🌐 네트워크 · 보안</div>
+          <div class="toggle-line"><div class="lbl">공인 IP 추가<small>개당 4,000</small></div><div class="rt"><input class="qty" type="number" id="clIp" value="24" min="0" oninput="calcCloud()"></div></div>
+          <div class="toggle-line"><div class="lbl">로드밸런서 (Small)<small>개당 15,000</small></div><div class="rt"><input class="qty" type="number" id="clLb" value="3" min="0" oninput="calcCloud()"></div></div>
+          <div class="toggle-line"><div class="lbl">WAF Appliance<small>대당 600,000</small></div><div class="rt"><input class="qty" type="number" id="clWaf" value="2" min="0" oninput="calcCloud()"></div></div>
+          <div class="toggle-line"><div class="lbl">바이러스 백신<small>VM당 30,000</small></div><div class="rt"><input class="qty" type="number" id="clAv" value="24" min="0" oninput="calcCloud()"></div></div>
+          <div class="toggle-line"><div class="lbl">IPS (Deep Security)<small>VM당 50,000</small></div><div class="rt"><input class="qty" type="number" id="clIps" value="24" min="0" oninput="calcCloud()"></div></div>
+
+          <div class="divider"></div>
+          <div class="sec-head">🛠️ 매니지드 · 할인</div>
+          <div class="toggle-line"><div class="lbl">매니지드 스탠다드<small>VM당 100,000</small></div><div class="rt"><input class="qty" type="number" id="clMng" value="24" min="0" oninput="calcCloud()"></div></div>
+          <div class="row">
+            <div class="field"><label>할인율 (%)</label><input type="number" id="clDc" value="20" min="0" oninput="calcCloud()"></div>
+            <div class="field"><label>이용 개월</label><input type="number" id="clMonths" value="1" min="1" oninput="calcCloud()"></div>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="card">
+          <h2><span class="n">2</span> 견적서 미리보기</h2>
+          <div class="body">
+            <div class="quote-head">
+              <div class="co" id="clCo">에바씨엔피㈜ <small>가비아 클라우드 서비스 견적서</small></div>
+              <div class="right">견적일 2026-07-28<br>유효기간 30일<br><span class="pill">Gen2 · VM 기준</span></div>
+            </div>
+            <table class="q" id="clTable"></table>
+            <div class="totbox">
+              <div class="l"><span>월 요금(할인 전)</span><span class="v" id="clGross">0 원</span></div>
+              <div class="l"><span id="clDcLabel">할인 (20%)</span><span class="v" id="clDcAmt">0 원</span></div>
+              <div class="l"><span>월 요금 소계</span><span class="v" id="clSub">0 원</span></div>
+              <div class="l big"><span>월 요금 총액 (VAT 포함)</span><span class="v" id="clTotal">0 원</span></div>
+            </div>
+            <div class="actions">
+              <button onclick="alert('프로토타입: 클라우드 견적서 양식(Gen2)으로 다운로드됩니다.')">📄 엑셀 다운로드</button>
+              <button class="primary" onclick="alert('프로토타입: PDF 견적서 출력')">📑 PDF 출력</button>
+            </div>
+            <div class="note" id="clNote"></div>
+          </div>
+        </div>
+        <div class="card">
+          <h2><span class="n">3</span> 리소스 요약</h2>
+          <div class="body">
+            <div class="feat-item"><span>총 가상서버(VM) 수</span><span id="clSumVm" class="on2">0 대</span></div>
+            <div class="feat-item"><span>총 vCore / Memory</span><span id="clSumCpu">0 vCore · 0 GB</span></div>
+            <div class="feat-item"><span>총 스토리지(Root+Data+NAS)</span><span id="clSumSto">0 GB</span></div>
+            <div class="note">※ 클라우드는 서버 토폴로지 대신 리소스 총량으로 요약합니다. Compute 단가는 어드민 마스터의 Gen2 단가표를 참조합니다.</div>
+          </div>
+        </div>
       </div>
     </div>
+    </div><!-- /cat-cloud -->
 
     </div><!-- /sub-build -->
   </main>
@@ -929,7 +993,35 @@
 
         <!-- 클라우드 -->
         <div id="mp-cloud" class="hidden">
-          <div class="cloud-ph" style="padding:40px">☁️ 클라우드 카테고리는 준비 중입니다. 양식 확보 후 자체 단가표 스키마로 추가됩니다.</div>
+          <div class="chips" style="margin:12px 0">
+            <span class="chip on" data-g="cl-compute" onclick="mpGrp('cl-compute')">Compute 단가표 (Gen2)</span>
+            <span class="chip" data-g="cl-etc" onclick="mpGrp('cl-etc')">스토리지 · 네트워크 · 보안</span>
+          </div>
+          <div id="g-cl-compute">
+            <table class="u">
+              <thead><tr><th>유형</th><th>vCore</th><th>Memory(GB)</th><th>월 단가</th><th>유효일자</th></tr></thead>
+              <tbody>
+                <tr><td>표준(Standard)</td><td>2</td><td>8</td><td>68,500</td><td>2026-04-08</td></tr>
+                <tr><td>표준(Standard)</td><td>4</td><td>16</td><td>137,000</td><td>2026-04-08</td></tr>
+                <tr><td>고성능CPU(High CPU)</td><td>4</td><td>8</td><td>110,000</td><td>2026-04-08</td></tr>
+                <tr><td>고용량메모리(High Memory)</td><td>2</td><td>16</td><td>90,000</td><td>2026-04-08</td></tr>
+                <tr><td>고용량메모리(High Memory)</td><td>4</td><td>32</td><td>180,000</td><td>2026-04-08</td></tr>
+              </tbody>
+            </table>
+            <div class="note" style="margin-top:8px">고유 컬럼: <b>vCore · Memory · 스펙유형</b> — IDC(부품)·하이윅스(계정)와 또 다른 VM 스펙 스키마</div>
+          </div>
+          <div id="g-cl-etc" class="hidden">
+            <table class="u">
+              <thead><tr><th>구분</th><th>품목</th><th>단위</th><th>단가</th><th>유효일자</th></tr></thead>
+              <tbody>
+                <tr><td>스토리지</td><td>Block Storage</td><td>GB당</td><td>115</td><td>2026-04-08</td></tr>
+                <tr><td>스토리지</td><td>NAS (SSD)</td><td>GB당</td><td>70</td><td>2026-04-08</td></tr>
+                <tr><td>네트워크</td><td>공인 IP</td><td>개당</td><td>4,000</td><td>2026-04-08</td></tr>
+                <tr><td>네트워크</td><td>로드밸런서(Small)</td><td>개당</td><td>15,000</td><td>2026-04-08</td></tr>
+                <tr><td>보안</td><td>백신 / IPS</td><td>VM당</td><td>30,000 / 50,000</td><td>2026-04-08</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="stub" style="background:#f4f8fd;border-color:#cfe0f2">공통 관리 필드(카테고리 무관): <b>품목코드 · 기준가/판매가 · 유효일자 · 승인상태 · 변경이력</b> → 그라운딩(승인 단가만 사용) + 버전관리(단가 변경 이력 추적)를 모든 카테고리에서 동일하게 보장</div>
@@ -1132,7 +1224,64 @@ function switchCat(c){
   if(c==='cloud'){ /* disabled but still show placeholder */ }
   ['idc','hiworks','cloud'].forEach(x=>document.getElementById('cat-'+x).classList.toggle('hidden', x!==c));
   document.querySelectorAll('.catcard[data-cat]').forEach(b=>b.classList.toggle('on', b.dataset.cat===c));
-  if(c==='idc') calc(); if(c==='hiworks') calcHw();
+  if(c==='idc') calc(); if(c==='hiworks') calcHw(); if(c==='cloud'){ if(!clInit) clRenderVms(); calcCloud(); }
+}
+// ---- 클라우드(Gen2) ----
+const CL_SPECS = [ // 라벨, vCore, RAM, 단가
+  ["표준 2vCore/8GB",2,8,68500],["표준 4vCore/16GB",4,16,137000],["표준 8vCore/32GB",8,32,274000],["표준 16vCore/64GB",16,64,548000],
+  ["고성능CPU 4vCore/8GB",4,8,110000],["고성능CPU 8vCore/16GB",8,16,220000],
+  ["고용량메모리 2vCore/16GB",2,16,90000],["고용량메모리 4vCore/32GB",4,32,180000],["고용량메모리 8vCore/64GB",8,64,360000],
+  ["마이크로 1vCore/2GB",2,2,20000]
+];
+const CL_STO=115, CL_NAS=70; // GB당
+let clInit=false;
+const clVms=[ {spec:0,root:100,data:100,qty:5}, {spec:6,root:100,data:100,qty:5}, {spec:0,root:100,data:200,qty:3} ];
+function clRenderVms(){
+  const opt=CL_SPECS.map((s,i)=>`<option value="${i}">${s[0]} (${s[3].toLocaleString()})</option>`).join('');
+  document.getElementById('clVmRows').innerHTML = clVms.map((v,i)=>`
+    <div class="row" style="gap:6px;align-items:flex-end">
+      <div class="field" style="flex:2"><label>${i===0?'스펙':''}</label><select onchange="clVms[${i}].spec=+this.value;calcCloud()">${opt}</select></div>
+      <div class="field"><label>${i===0?'Root GB':''}</label><input type="number" value="${v.root}" min="0" oninput="clVms[${i}].root=+this.value;calcCloud()"></div>
+      <div class="field"><label>${i===0?'Data GB':''}</label><input type="number" value="${v.data}" min="0" oninput="clVms[${i}].data=+this.value;calcCloud()"></div>
+      <div class="field" style="flex:.7"><label>${i===0?'수량':''}</label><input type="number" value="${v.qty}" min="0" oninput="clVms[${i}].qty=+this.value;calcCloud()"></div>
+    </div>`).join('');
+  clVms.forEach((v,i)=>{ document.querySelectorAll('#clVmRows select')[i].value=v.spec; });
+  clInit=true;
+}
+function clAddVm(){ clVms.push({spec:0,root:100,data:0,qty:1}); clRenderVms(); calcCloud(); }
+function calcCloud(){
+  const months=N('clMonths'); const rows=[]; let vmCnt=0, vcore=0, ram=0, sto=0, gross=0;
+  const add=(nm,unit,qty)=>{ const s=unit*qty; gross+=s; rows.push([nm,unit,qty,s]); return s; };
+  clVms.forEach((v,i)=>{
+    if(v.qty<=0) return; const sp=CL_SPECS[v.spec];
+    vmCnt+=v.qty; vcore+=sp[1]*v.qty; ram+=sp[2]*v.qty; sto+=(v.root+v.data)*v.qty;
+    add(`서버 그룹${i+1} · ${sp[0]}`, sp[3], v.qty);
+    if(v.root) add(`  └ Root Storage ${v.root}GB`, Math.round(v.root*CL_STO), v.qty);
+    if(v.data) add(`  └ Data Storage ${v.data}GB`, Math.round(v.data*CL_STO), v.qty);
+  });
+  const nas=N('clNas'); if(nas){ sto+=nas; add(`NAS (SSD) ${nas}GB`, Math.round(nas*CL_NAS), 1); }
+  if(N('clIp')) add('공인 IP 추가', 4000, N('clIp'));
+  if(N('clLb')) add('로드밸런서 (Small)', 15000, N('clLb'));
+  if(N('clWaf')) add('WAF Appliance', 600000, N('clWaf'));
+  if(N('clAv')) add('바이러스 백신 (VM당)', 30000, N('clAv'));
+  if(N('clIps')) add('IPS Deep Security (VM당)', 50000, N('clIps'));
+  if(N('clMng')) add('매니지드 스탠다드 (VM당)', 100000, N('clMng'));
+  gross*=months;
+  const dcRate=N('clDc')/100, dc=gross*dcRate, sub=gross-dc, total=sub*1.1;
+  let html='<thead><tr><th style="text-align:left">품목</th><th>단가</th><th>수량</th><th>제안요금합</th></tr></thead><tbody>';
+  rows.forEach(r=>{ html+=`<tr><td>${r[0]}</td><td class="num">${won(r[1])}</td><td class="num">${r[2]}</td><td class="num">${won(r[3]*months)}</td></tr>`; });
+  html+=`<tr class="sub"><td>월 요금(할인 전)</td><td></td><td></td><td class="num">${won(gross)}</td></tr></tbody>`;
+  document.getElementById('clTable').innerHTML=html;
+  document.getElementById('clGross').textContent=won(gross);
+  document.getElementById('clDcLabel').textContent=`할인 (${N('clDc')}%)`;
+  document.getElementById('clDcAmt').textContent='- '+won(dc);
+  document.getElementById('clSub').textContent=won(sub);
+  document.getElementById('clTotal').textContent=won(total);
+  document.getElementById('clCo').innerHTML=(V('clCust')||'고객사')+' <small>가비아 클라우드 서비스 견적서</small>';
+  document.getElementById('clSumVm').textContent=vmCnt+' 대';
+  document.getElementById('clSumCpu').textContent=vcore+' vCore · '+ram+' GB';
+  document.getElementById('clSumSto').textContent=sto.toLocaleString()+' GB';
+  document.getElementById('clNote').innerHTML=`가상서버 ${vmCnt}대(${vcore}vCore/${ram}GB) + 스토리지 ${sto.toLocaleString()}GB · 할인 ${N('clDc')}% 적용 · VAT 포함`;
 }
 // 어드민 기준단가 마스터: 카테고리 → 서비스군
 function mpCat(cat){
